@@ -1,7 +1,0 @@
-name = "ikonia-worker"
-main = "worker/index.js"
-compatibility_date = "2025-01-01"
-
-[vars]
-# Your site's origin(s), comma separated, no trailing slash.
-ALLOWED_ORIGIN = "https://USERNAME.github.io"
