@@ -4,18 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ikonia · icon library with an MCP server</title>
-<meta name="description" content="Outline and solid icons you can search by meaning, plus an MCP server your coding agent can query. Free, MIT licence.">
+<meta name="description" content="Outline and solid icons in 100 categories, searchable by meaning. Copy SVG or JSX, download SVG or PNG. Free, MIT licence.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eef1f6;--card:#ffffff;--ink:#0e1424;--mute:#5b6479;--line:#d8deea;--accent:#2f5bff;--onaccent:#fff;--code:#0e1424;--codeink:#e6eaf6;
+:root{--bg:#eef1f6;--card:#fff;--ink:#0e1424;--mute:#5b6479;--line:#d8deea;--accent:#2f5bff;--onaccent:#fff;--code:#0e1424;--codeink:#e6eaf6;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;--code:#141416;--codeink:#e6eaf6;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;--code:#141416;--codeink:#e6eaf6;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
 .brand{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;display:flex;gap:10px;align-items:center;color:var(--ink);text-decoration:none}
@@ -33,68 +34,116 @@ h1{font:800 clamp(40px,8vw,84px)/.95 "Bricolage Grotesque",sans-serif;letter-spa
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;align-items:center;color:var(--mute);font-size:14px}
 .chips button{border:1px solid var(--line);background:none;color:var(--ink);border-radius:99px;padding:5px 13px;font:500 14px "Instrument Sans",sans-serif;cursor:pointer}
 .chips button:hover{border-color:var(--accent);color:var(--accent)}
-.bar{display:flex;justify-content:space-between;align-items:center;margin:48px 0 14px;gap:12px;flex-wrap:wrap}
+.gen{margin-top:14px}
+.gen button{border:2px dashed var(--accent);background:none;color:var(--accent);border-radius:12px;padding:9px 16px;font:600 15px "Instrument Sans",sans-serif;cursor:pointer}
+.gen button:hover:not(:disabled){background:var(--accent);color:var(--onaccent)}
+.gen button:disabled{opacity:.6;cursor:wait}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:40px 0 18px;gap:12px;flex-wrap:wrap}
 .count{color:var(--mute);font-size:15px}
 .seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px}
 .seg button{border:0;background:none;color:var(--mute);font:600 14px "Instrument Sans",sans-serif;padding:7px 16px;border-radius:9px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--onaccent)}
+.grp{margin:0 0 44px}
+.grp h2{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;margin:0 0 14px}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:2px;transition:border-color .15s}
+.cat:hover{border-color:var(--accent)}
+.cat .pv{display:flex;gap:6px;height:28px;margin-bottom:8px;color:var(--accent)}
+.cat .pv svg{width:24px;height:24px}
+.cat b{font-weight:600}
+.cat small{color:var(--mute)}
+.cat.soon{background:transparent;border-style:dashed}
+.cat.soon b{color:var(--mute)}
+.crumb{display:inline-block;margin:10px 0 0;color:var(--mute);text-decoration:none;font-weight:500}
+.crumb:hover{color:var(--ink)}
+.gl{color:var(--accent);font-weight:600;margin-top:22px;font-size:14px}
+.chead h1{font-size:clamp(34px,6vw,60px);margin:6px 0 6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
 .ic{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;color:var(--ink);font:500 13px "Instrument Sans",sans-serif;transition:border-color .15s,transform .15s}
 .ic svg{width:32px;height:32px}
 .ic:hover{border-color:var(--accent)}
 .ic:active{transform:scale(.96)}
 .ic span{color:var(--mute);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.empty{grid-column:1/-1;padding:40px 0;color:var(--mute)}
-section.agents{margin:96px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
-h2{font:800 clamp(28px,4vw,40px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em;margin:0 0 14px}
+.empty{padding:36px 0;color:var(--mute)}
+dialog{border:0;padding:0;border-radius:24px;width:min(980px,calc(100vw - 20px));max-height:calc(100dvh - 20px);background:var(--card);color:var(--ink);overflow:auto}
+dialog::backdrop{background:rgba(10,14,30,.55)}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:32px;padding:28px}
+.stage{position:relative;aspect-ratio:1;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card)}
+.stage .big,.stage .ov{position:absolute;inset:0;width:100%;height:100%}
+.stage .big svg{width:100%;height:100%;display:block}
+.stage:not([data-g]) .og,.stage:not([data-k]) .ok,.stage:not([data-p]) .op{display:none}
+.pills{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.pills button{border:0;background:none;color:var(--mute);font:500 14px "Instrument Sans",sans-serif;padding:7px 14px;border-radius:99px;cursor:pointer}
+.pills button[aria-pressed="true"]{background:var(--bg);color:var(--ink);font-weight:600}
+.dtop{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:14px}
+.dtop a{color:var(--mute);text-decoration:none}
+.dtop a:hover{color:var(--accent)}
+.x{border:0;background:none;color:var(--mute);font-size:28px;line-height:1;cursor:pointer;padding:0 4px}
+.dr h2{font:800 32px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;margin:6px 0 0}
+.dr code{font:400 13px "JetBrains Mono",monospace;color:var(--mute)}
+.dr .seg{display:flex;width:100%;margin:18px 0}
+.dr .seg button{flex:1;padding:11px}
+.srow{display:flex;gap:18px;align-items:flex-start}
+.prevbox{flex:none;width:104px;height:104px;border-radius:16px;background:var(--bg);display:grid;place-items:center;overflow:hidden}
+.sl{flex:1;min-width:0}
+.sh{display:flex;justify-content:space-between;font-size:14px;color:var(--mute)}
+.sh b{font:500 13px "JetBrains Mono",monospace;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:10px 0 4px}
+.tk{display:flex;justify-content:space-between}
+.tk button{border:0;background:none;color:var(--mute);font:500 12px "JetBrains Mono",monospace;cursor:pointer;padding:2px 4px}
+.tk button:hover{color:var(--accent)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 12px}
+.btns button{border:0;border-radius:99px;padding:13px;font:600 15px "Instrument Sans",sans-serif;cursor:pointer;background:var(--bg);color:var(--ink)}
+.btns .b1{background:var(--ink);color:var(--bg)}
+.btns button:hover{opacity:.85}
+.ctabs button{border:0;background:none;color:var(--mute);font:500 14px "Instrument Sans",sans-serif;cursor:pointer;padding:4px 10px 4px 0}
+.ctabs button[aria-pressed="true"]{color:var(--accent);font-weight:600}
+pre#code{background:var(--code);color:var(--codeink);border-radius:12px;padding:14px;margin:8px 0 0;overflow:auto;max-height:180px;font:400 12.5px/1.6 "JetBrains Mono",monospace;white-space:pre-wrap;word-break:break-all}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.tags button{border:0;background:var(--bg);color:var(--ink);border-radius:99px;padding:6px 14px;font:500 14px "Instrument Sans",sans-serif;cursor:pointer}
+.tags button:hover{color:var(--accent)}
+.relh{color:var(--mute);font-size:14px;margin-bottom:8px}
+.rel{display:flex;gap:8px;flex-wrap:wrap}
+.rel button{width:52px;height:52px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;display:grid;place-items:center;cursor:pointer}
+.rel button:hover{border-color:var(--accent)}
+.rel svg{width:24px;height:24px}
+section.agents{margin:70px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.agents h2{font:800 clamp(28px,4vw,40px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em;margin:0 0 14px}
 .agents p{color:var(--mute);margin:0 0 14px;max-width:30em}
 .code{background:var(--code);color:var(--codeink);border-radius:16px;padding:20px;position:relative;border:1px solid var(--line)}
 .code pre{margin:0;overflow-x:auto;font:400 14px/1.7 "JetBrains Mono",monospace}
 .code .cp{position:absolute;top:12px;right:12px;border:1px solid #3a3d48;background:none;color:var(--codeink);border-radius:8px;padding:4px 10px;font:500 12px "Instrument Sans",sans-serif;cursor:pointer}
-.code .cp:hover{border-color:var(--accent)}
-.ask{margin-top:14px;font:400 14px/1.6 "JetBrains Mono",monospace;color:var(--mute);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.ask b{color:var(--ink);font-weight:500}
-footer{margin:96px 0 0;padding:28px 0 36px;border-top:1px solid var(--line);color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-footer a{color:var(--mute)}
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.2s}
+footer{margin:80px 0 0;padding:28px 0 36px;border-top:1px solid var(--line);color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.toast{position:fixed;z-index:10;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.2s}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-@media (max-width:760px){section.agents{grid-template-columns:1fr}nav a:first-child{display:none}}
+@media (max-width:760px){section.agents,.dg{grid-template-columns:1fr}.dg{padding:18px}nav a:first-child{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-.gen{margin-top:14px}.gen[hidden]{display:none}.gen button{border:2px dashed var(--accent);background:none;color:var(--accent);border-radius:12px;padding:9px 16px;font:600 15px "Instrument Sans",sans-serif;cursor:pointer}.gen button:hover:not(:disabled){background:var(--accent);color:var(--onaccent)}.gen button:disabled{opacity:.6;cursor:wait}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <a class="brand" href="#"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg></i>Ikonia</a>
-  <nav><a href="#library">Library</a><a href="#agents">Use it in your agent</a><a href="#licence">Licence</a></nav>
+  <nav><a href="#">Categories</a><a href="#agents">Use it in your agent</a><a href="#licence">Licence</a></nav>
 </header>
 
-<main>
-<h1>Find the icon by what it means.</h1>
-<p class="lead">Outline and solid icons, searchable by meaning. Type “money” and get wallets and cards, not just a file called money.svg. Free for anything.</p>
+<section id="hero">
+  <h1>Find the icon by what it means.</h1>
+  <p class="lead">Outline and solid icons in 100 categories, searchable by meaning. Pick a size, then copy the SVG or JSX, or download SVG and PNG. Free for anything.</p>
+  <label class="search" for="q">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="M16 16l5 5"/></svg>
+    <input id="q" type="search" placeholder="Search by meaning: save, security, time…" autocomplete="off" spellcheck="false">
+  </label>
+  <div class="chips" id="chips">Try:</div>
+  <div class="gen" id="gen" hidden><button type="button" id="genBtn"></button></div>
+</section>
 
-<label class="search" for="q">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="M16 16l5 5"/></svg>
-  <input id="q" type="search" placeholder="Search by meaning: save, security, time…" autocomplete="off" spellcheck="false">
-</label>
-<div class="chips" id="chips">Try:</div>
-<div class="gen" id="gen" hidden><button type="button" id="genBtn"></button></div>
-
-<div class="bar" id="library">
-  <div class="count" id="count" aria-live="polite"></div>
-  <div class="seg" role="group" aria-label="Icon style">
-    <button type="button" data-m="outline" aria-pressed="true">Outline</button>
-    <button type="button" data-m="solid" aria-pressed="false">Solid</button>
-  </div>
-</div>
-<div class="grid" id="grid"></div>
+<main id="view"></main>
 
 <section class="agents" id="agents">
   <div>
     <h2>Let your coding agent pick the icon.</h2>
     <p>Add the MCP server once. Your agent can search by meaning, then paste the SVG straight into your code. No guessing file names.</p>
-    <div class="ask"><b>You:</b> add a button that saves the report to the device.<br><b>Agent:</b> search_icons("save to device") → download, bookmark</div>
   </div>
   <div class="code">
     <button class="cp" type="button" id="cp">Copy</button>
@@ -108,114 +157,214 @@ footer a{color:var(--mute)}
 }</pre>
   </div>
 </section>
-</main>
 
 <footer id="licence">
   <span>Ikonia icons are MIT licensed. Use them in personal and commercial work, no credit needed.</span>
-  <span>Click any icon to copy its SVG.</span>
+  <span>Click any icon to open it.</span>
 </footer>
 </div>
+
+<dialog id="dlg" aria-label="Icon details"></dialog>
 <div class="toast" id="toast" role="status"></div>
 
 <script type="module">
 import { cleanIcon } from "./lib/icon.js";
 import { WORKER_URL } from "./config.js";
 
-const KEY = "ikonia:generated";
+const KEY = "ikonia:generated", TARGET = 50, MISC = "miscellaneous-objects";
 const $ = (id) => document.getElementById(id);
-let I = [], mode = "outline", q = "", busy = false, tt;
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const title = (n) => n.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase());
+let I = [], CATS = [], by = {}, mode = "outline", q = "", size = 24, cur = null, tab = "", busy = false, tt;
+const cat = (s) => CATS.find((c) => c.s === s);
 
-function svg(i, exp) {
-  const s = mode === "solid", cut = exp ? "#fff" : "var(--card)";
-  const f = i.f.map((d) => `<path d="${d}"${s ? ' fill="currentColor"' : ""}/>`).join("");
-  const l = i.l ? `<path d="${i.l}"${s ? ` stroke="${cut}"` : ""}/>` : "";
-  const x = i.x ? `<path d="${i.x}"/>` : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${f}${l}${x}</svg>`;
+// ---- SVG / JSX builders -------------------------------------------------
+function svgStr(i, st, px, jsx, idp) {
+  const solid = st === "solid", p = (d, a = "") => `<path d="${d}"${a} />`;
+  const fs = i.f.map((d) => p(d, solid ? ' fill="currentColor"' : "")).join("");
+  let body;
+  if (solid && i.l && i.f.length) {
+    const id = idp + i.name;
+    body = `<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff" stroke="none" />${p(i.l, ' stroke="#000"')}</mask><g mask="url(#${id})">${fs}</g>`;
+  } else body = fs + (i.l ? p(i.l) : "");
+  if (i.x) body += p(i.x);
+  const a = jsx ? ["strokeWidth", "strokeLinecap", "strokeLinejoin"] : ["stroke-width", "stroke-linecap", "stroke-linejoin"];
+  return `<svg ${jsx ? "" : 'xmlns="http://www.w3.org/2000/svg" '}viewBox="0 0 24 24" width="${px}" height="${px}" fill="none" stroke="currentColor" ${a[0]}="1.75" ${a[1]}="round" ${a[2]}="round"${jsx ? " {...props}" : ""}>${body}</svg>`;
 }
+function jsxStr(i, st, px) {
+  let n = i.name.split("-").map((s) => s[0].toUpperCase() + s.slice(1)).join("") + "Icon";
+  if (/^\d/.test(n)) n = "Icon" + n;
+  return `export function ${n}(props) {\n  return (\n    ${svgStr(i, st, px, true, "cut-")}\n  );\n}`;
+}
+
+// ---- helpers ------------------------------------------------------------
+function toast(m) { const e = $("toast"); e.textContent = m; e.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => e.classList.remove("on"), 2200); }
+function copy(txt, msg) {
+  const fb = () => { const a = document.createElement("textarea"); a.value = txt; document.body.appendChild(a); a.select(); try { document.execCommand("copy"); toast(msg); } catch { toast("Copy failed. Select the text manually."); } a.remove(); };
+  try { navigator.clipboard.writeText(txt).then(() => toast(msg), fb); } catch { fb(); }
+}
+function save(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+const saved = () => { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } };
+const segHtml = () => `<div class="seg" role="group" aria-label="Icon style"><button type="button" data-m="outline" aria-pressed="${mode === "outline"}">Outline</button><button type="button" data-m="solid" aria-pressed="${mode === "solid"}">Solid</button></div>`;
+const iconBtn = (i) => `<button class="ic" type="button" data-n="${i.name}" aria-label="Open ${i.name}">${svgStr(i, mode, 24, false, "g-")}<span>${i.name}</span></button>`;
+
+// ---- search -------------------------------------------------------------
 function score(i, t) {
   const w = i.tags.split(" ");
   if (i.name === t) return 4;
   if (i.name.startsWith(t)) return 3;
   if (w.includes(t)) return 2.5;
   if (w.some((k) => k.startsWith(t))) return 1.5;
-  return (i.name + " " + i.tags).includes(t) ? 0.5 : 0;
+  return i.k.includes(t) ? 0.5 : 0;
 }
-function render() {
-  const t = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  let list = I;
+const tokens = () => q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+
+// ---- views --------------------------------------------------------------
+function homeView() {
+  const t = tokens();
   if (t.length) {
-    list = I.map((i) => [i, t.reduce((a, w) => a + score(i, w), 0)])
-      .filter((p) => p[1] > 0).sort((a, b) => b[1] - a[1]).map((p) => p[0]);
+    const list = I.map((i) => [i, t.reduce((a, w) => a + score(i, w), 0)]).filter((p) => p[1] > 0).sort((a, b) => b[1] - a[1]).map((p) => p[0]);
+    $("view").innerHTML = `<div class="bar"><div class="count">${list.length} of ${I.length} icons</div>${segHtml()}</div>` +
+      (list.length ? `<div class="grid">${list.map(iconBtn).join("")}</div>` : `<div class="empty">No icons match “${esc(q.trim())}”. ${WORKER_URL ? "Generate one above or try" : "Try"} a broader word such as “money” or “time”.</div>`);
+    return;
   }
-  $("grid").innerHTML = list.length
-    ? list.map((i) => `<button class="ic" type="button" data-n="${i.name}" aria-label="Copy ${i.name} icon">${svg(i)}<span>${i.name}</span></button>`).join("")
-    : `<div class="empty">No icons match “${q.replace(/[<>&"]/g, "")}”. ${WORKER_URL ? "Generate one below or try" : "Try"} a broader word such as “money” or “time”.</div>`;
-  $("count").textContent = t.length ? `${list.length} of ${I.length} icons` : `${I.length} icons`;
+  let h = `<div class="bar"><div class="count">${I.length} icons · ${CATS.length} categories</div>${segHtml()}</div>`;
+  for (const g of [...new Set(CATS.map((c) => c.g))]) {
+    h += `<section class="grp"><h2>${esc(g)}</h2><div class="cats">` + CATS.filter((c) => c.g === g).map((c) => {
+      const l = by[c.s] || [];
+      return `<a class="cat${l.length ? "" : " soon"}" href="#c-${c.s}"><span class="pv">${l.slice(0, 3).map((i) => svgStr(i, mode, 24, false, "p-")).join("")}</span><b>${esc(c.n)}</b><small>${l.length ? l.length + " icons" : "Coming soon"}</small></a>`;
+    }).join("") + `</div></section>`;
+  }
+  $("view").innerHTML = h;
+}
+function catView(c) {
+  const l = by[c.s] || [];
+  $("view").innerHTML = `<a class="crumb" href="#">← All categories</a><div class="chead"><div class="gl">${esc(c.g)}</div><h1>${esc(c.n)}</h1></div>` +
+    `<div class="bar" style="margin-top:6px"><div class="count">${l.length} of ${TARGET} icons</div>${segHtml()}</div>` +
+    (l.length ? `<div class="grid">${l.map(iconBtn).join("")}</div>` : `<div class="empty">No icons in this category yet.</div>`);
+}
+function route() {
+  const m = location.hash.slice(1).match(/^c-(.+)$/), c = m && cat(m[1]);
+  $("hero").hidden = $("agents").hidden = !!c;
+  c ? catView(c) : homeView();
+  const h = location.hash.slice(1);
+  if (c) scrollTo(0, 0); else if (h === "agents" || h === "licence") $(h).scrollIntoView();
   updateGen();
 }
 function updateGen() {
-  const has = q.trim().length > 1;
+  const has = q.trim().length > 1 && !location.hash.startsWith("#c-");
   $("gen").hidden = !(has && WORKER_URL);
   if (!busy) $("genBtn").textContent = `Generate an icon for “${q.trim()}” with AI`;
 }
-function toast(m) {
-  const e = $("toast"); e.textContent = m; e.classList.add("on");
-  clearTimeout(tt); tt = setTimeout(() => e.classList.remove("on"), 2200);
-}
-function copy(txt, msg) {
-  const fb = () => {
-    const a = document.createElement("textarea"); a.value = txt; document.body.appendChild(a); a.select();
-    try { document.execCommand("copy"); toast(msg); } catch { toast("Copy failed. Select the text manually."); }
-    a.remove();
-  };
-  try { navigator.clipboard.writeText(txt).then(() => toast(msg), fb); } catch { fb(); }
-}
-function saved() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
 
-async function load() {
-  try { I = (await (await fetch("icons.json")).json()).map(cleanIcon); }
-  catch { toast("Could not load icons.json"); }
-  for (const s of saved()) {
-    try { const c = cleanIcon(s); if (!I.some((i) => i.name === c.name)) I.push(c); } catch {}
-  }
-  render();
+// ---- icon dialog --------------------------------------------------------
+const overlay = (() => {
+  let g = ""; for (let k = 1; k < 24; k++) g += `M${k} 0v24M0 ${k}h24`;
+  return `<svg class="ov" viewBox="0 0 24 24" aria-hidden="true"><path class="og" d="${g}" stroke="#7d97ff" stroke-width=".05" opacity=".5" fill="none"/>` +
+    `<g class="ok" fill="none" stroke="#5b7bff" stroke-width=".08"><circle cx="12" cy="12" r="10"/><rect x="3" y="3" width="18" height="18"/><rect x="4" y="2" width="16" height="20"/><rect x="2" y="4" width="20" height="16"/><path d="M12 0v24M0 12h24" opacity=".5"/></g>` +
+    `<path class="op" d="M0 0h24v24H0zM2 2v20h20V2z" fill="#ff5b5b" fill-opacity=".14" fill-rule="evenodd"/></svg>`;
+})();
+function openIcon(n) { cur = I.find((i) => i.name === n); if (!cur) return; tab = ""; renderDialog(); if (!$("dlg").open) $("dlg").showModal(); }
+function renderDialog() {
+  const i = cur, c = cat(i.c || MISC) || { n: "Miscellaneous Objects", s: MISC };
+  const rel = (by[c.s] || []).filter((x) => x !== i).slice(0, 8);
+  const old = $("stage"), fl = old ? old.dataset : { g: "", k: "" };
+  $("dlg").innerHTML = `<div class="dg"><div class="dl">
+    <div class="stage" id="stage" ${"g" in fl ? "data-g" : ""} ${"k" in fl ? "data-k" : ""} ${"p" in fl ? "data-p" : ""}><div class="big">${svgStr(i, mode, 24, false, "b-")}</div>${overlay}</div>
+    <div class="pills"><button type="button" data-t="g">Grid</button><button type="button" data-t="k">Keylines</button><button type="button" data-t="p">Padding</button></div>
+  </div><div class="dr">
+    <div class="dtop"><a href="#c-${c.s}" data-close>${esc(c.n)}</a><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <h2>${esc(title(i.name))}</h2><code>${i.name}</code>
+    ${segHtml()}
+    <div class="srow"><div class="prevbox" id="pv"></div><div class="sl"><div class="sh"><span>Size</span><b id="sz"></b></div>
+      <input type="range" id="rg" min="16" max="128" step="4" value="${size}" aria-label="Icon size in pixels">
+      <div class="tk">${[16, 20, 24, 32, 48, 64].map((n) => `<button type="button" data-sz="${n}">${n}</button>`).join("")}</div></div></div>
+    <div class="btns"><button class="b1" type="button" data-a="csvg">Copy SVG</button><button type="button" data-a="cjsx">Copy JSX</button><button type="button" data-a="dsvg">Download SVG</button><button type="button" data-a="dpng">Download PNG</button></div>
+    <div class="ctabs"><button type="button" data-c="svg">SVG code</button><button type="button" data-c="jsx">JSX code</button></div>
+    <pre id="code" hidden></pre>
+    <div class="tags">${[...new Set(i.tags.split(" ").filter(Boolean))].slice(0, 8).map((t) => `<button type="button" data-tag="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+    ${rel.length ? `<div class="relh">Related</div><div class="rel">${rel.map((r) => `<button type="button" data-r="${r.name}" aria-label="${r.name}">${svgStr(r, mode, 24, false, "r-")}</button>`).join("")}</div>` : ""}
+  </div></div>`;
+  syncDialog();
 }
+function syncDialog() {
+  const st = $("stage").dataset;
+  $("dlg").querySelectorAll("[data-t]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.t in st));
+  $("dlg").querySelectorAll("[data-c]").forEach((b) => b.setAttribute("aria-pressed", b.dataset.c === tab));
+  updPreview();
+}
+function updPreview() {
+  $("pv").innerHTML = svgStr(cur, mode, size, false, "v-");
+  $("sz").textContent = size + " px";
+  const code = $("code"); code.hidden = !tab;
+  if (tab) code.textContent = tab === "svg" ? svgStr(cur, mode, size, false, "cut-") : jsxStr(cur, mode, size);
+}
+function download(kind) {
+  const base = cur.name + (mode === "solid" ? "-solid" : ""), s = svgStr(cur, mode, size, false, "cut-");
+  if (kind === "svg") return save(new Blob([s], { type: "image/svg+xml" }), base + ".svg");
+  const url = URL.createObjectURL(new Blob([s], { type: "image/svg+xml" })), img = new Image();
+  img.onload = () => { const c = document.createElement("canvas"); c.width = c.height = size; c.getContext("2d").drawImage(img, 0, 0, size, size); c.toBlob((b) => b ? save(b, base + ".png") : toast("PNG export failed")); URL.revokeObjectURL(url); };
+  img.onerror = () => toast("PNG export failed");
+  img.src = url;
+}
+$("dlg").addEventListener("click", (e) => {
+  const d = $("dlg"), t = e.target;
+  if (t === d || t.closest("[data-close]")) return d.close();
+  let b;
+  if ((b = t.closest("[data-t]"))) { const s = $("stage").dataset; b.dataset.t in s ? delete s[b.dataset.t] : (s[b.dataset.t] = ""); syncDialog(); }
+  else if ((b = t.closest("[data-sz]"))) { size = +b.dataset.sz; $("rg").value = size; updPreview(); }
+  else if ((b = t.closest("[data-c]"))) { tab = tab === b.dataset.c ? "" : b.dataset.c; syncDialog(); }
+  else if ((b = t.closest("[data-r]"))) { cur = I.find((i) => i.name === b.dataset.r); tab = ""; renderDialog(); }
+  else if ((b = t.closest("[data-tag]"))) { d.close(); q = b.dataset.tag; $("q").value = q; if (location.hash) location.hash = ""; else route(); scrollTo(0, 0); }
+  else if ((b = t.closest("[data-a]"))) {
+    const a = b.dataset.a;
+    if (a === "csvg") copy(svgStr(cur, mode, size, false, "cut-"), "SVG copied");
+    else if (a === "cjsx") copy(jsxStr(cur, mode, size), "JSX copied");
+    else download(a === "dsvg" ? "svg" : "png");
+  }
+});
+$("dlg").addEventListener("input", (e) => { if (e.target.id === "rg") { size = +e.target.value; updPreview(); } });
+
+// ---- global events ------------------------------------------------------
+document.addEventListener("click", (e) => {
+  const m = e.target.closest("[data-m]");
+  if (m) { mode = m.dataset.m; route(); if ($("dlg").open) renderDialog(); return; }
+  const n = e.target.closest("#view .ic");
+  if (n) openIcon(n.dataset.n);
+});
+$("q").addEventListener("input", (e) => { q = e.target.value; if (location.hash.startsWith("#c-")) location.hash = ""; else route(); });
+addEventListener("hashchange", route);
+["money", "security", "upload", "time", "message"].forEach((w) => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = w;
+  b.onclick = () => { $("q").value = w; q = w; if (location.hash) location.hash = ""; else route(); };
+  $("chips").appendChild(b);
+});
+$("cp").onclick = () => copy($("cfg").textContent, "Config copied");
 
 async function generate() {
-  if (busy) return;
-  if (!WORKER_URL) { toast("Set WORKER_URL in site/config.js first (see README)."); return; }
+  if (busy || !WORKER_URL) return;
   busy = true; $("genBtn").disabled = true; $("genBtn").textContent = "Generating…";
   try {
     const r = await fetch(WORKER_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt: q.trim() }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || "Request failed");
-    const icon = cleanIcon(data);
-    if (!I.some((i) => i.name === icon.name)) I.push(icon);
+    const icon = cleanIcon(data); icon.c = icon.c || MISC; icon.k = (icon.tags + " " + (cat(icon.c)?.n || "")).toLowerCase();
+    if (!I.some((i) => i.name === icon.name)) { I.push(icon); (by[icon.c] = by[icon.c] || []).push(icon); }
     try { localStorage.setItem(KEY, JSON.stringify([...saved(), icon].slice(-100))); } catch {}
-    q = icon.name; $("q").value = q; render();
+    q = icon.name; $("q").value = q; route();
     toast(`Generated “${icon.name}”. Saved in this browser.`);
   } catch (e) { toast(e.message); }
   finally { busy = false; $("genBtn").disabled = false; updateGen(); }
 }
-
-$("q").addEventListener("input", (e) => { q = e.target.value; render(); });
 $("genBtn").addEventListener("click", generate);
-$("grid").addEventListener("click", (e) => {
-  const b = e.target.closest(".ic"); if (!b) return;
-  const i = I.find((x) => x.name === b.dataset.n);
-  copy(svg(i, true), `Copied ${i.name} as SVG`);
-});
-document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
-  mode = b.dataset.m;
-  document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
-  render();
-}));
-["money", "security", "upload", "time", "message"].forEach((w) => {
-  const b = document.createElement("button"); b.type = "button"; b.textContent = w;
-  b.onclick = () => { $("q").value = w; q = w; render(); };
-  $("chips").appendChild(b);
-});
-$("cp").onclick = () => copy($("cfg").textContent, "Config copied");
+
+async function load() {
+  try { CATS = await (await fetch("categories.json")).json(); I = (await (await fetch("icons.json")).json()).map(cleanIcon); }
+  catch { toast("Could not load data files"); }
+  for (const s of saved()) { try { const c = cleanIcon(s); if (!I.some((i) => i.name === c.name)) I.push(c); } catch {} }
+  for (const i of I) { i.c = i.c || MISC; i.k = (i.tags + " " + (cat(i.c)?.n || "")).toLowerCase(); (by[i.c] = by[i.c] || []).push(i); }
+  route();
+}
 load();
 </script>
 </body>
