@@ -117,80 +117,9 @@ footer a{color:var(--mute)}
 </div>
 <div class="toast" id="toast" role="status"></div>
 
-<script>
-const PATH = /^[MmLlHhVvCcSsQqTtAaZz0-9eE.,\s+-]*$/;
-
-function path(s, max) {
-  if (s == null || s === "") return "";
-  if (typeof s !== "string" || s.length > max || !PATH.test(s)) throw new Error("Invalid path data");
-  return s.trim();
-}
-
-// Validates and normalises an icon. Throws if anything looks wrong.
-function cleanIcon(raw) {
-  if (!raw || typeof raw !== "object") throw new Error("Icon is not an object");
-  const name = String(raw.name || "").toLowerCase().trim().replace(/\s+/g, "-");
-  if (!/^[a-z0-9-]{2,30}$/.test(name)) throw new Error("Invalid icon name");
-  const tags = String(raw.tags || "").toLowerCase().replace(/[^a-z0-9 -]/g, " ").replace(/\s+/g, " ").trim().slice(0, 160);
-  const f = (Array.isArray(raw.f) ? raw.f : []).slice(0, 4).map((d) => path(d, 700)).filter(Boolean);
-  const l = path(raw.l, 900);
-  const x = path(raw.x, 900);
-  if (!f.length && !l && !x) throw new Error("Icon has no shapes");
-  return { name, tags, f, l, x };
-}
-
-
-const PRELOADED = [
-{"name":"home","tags":"house building start main","f":["M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"],"l":"M10 20v-4h4v4","x":""},
-{"name":"search","tags":"find magnifier lookup explore zoom","f":["M10.5 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z"],"l":"","x":"M16 16l5 5"},
-{"name":"heart","tags":"love like favorite health","f":["M12 20s-8-4.7-8-10.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5C20 15.3 12 20 12 20z"],"l":"","x":""},
-{"name":"star","tags":"favorite rating review best","f":["M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"],"l":"","x":""},
-{"name":"user","tags":"person profile account avatar people","f":["M12 3a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z","M4 21c0-4 3.6-6 8-6s8 2 8 6z"],"l":"","x":""},
-{"name":"mail","tags":"email message inbox letter envelope","f":["M3 5h18v14H3z"],"l":"M3 6l9 7 9-7","x":""},
-{"name":"bell","tags":"notification alert alarm reminder","f":["M6 17V11a6 6 0 0 1 12 0v6l2 2H4z"],"l":"","x":"M10 21h4"},
-{"name":"sun","tags":"light day brightness theme weather","f":["M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"],"l":"","x":"M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"},
-{"name":"moon","tags":"dark night theme sleep","f":["M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"],"l":"","x":""},
-{"name":"cloud","tags":"weather storage sync backup","f":["M7 18a4 4 0 0 1-.5-8 5.5 5.5 0 0 1 10.7-1A4.5 4.5 0 0 1 17 18z"],"l":"","x":""},
-{"name":"lock","tags":"security password private secure protect safe","f":["M5 11h14v10H5z"],"l":"M12 15v2","x":"M8 11V8a4 4 0 0 1 8 0v3"},
-{"name":"key","tags":"password access login security","f":["M8 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"],"l":"","x":"M12 12h9M18 12v3"},
-{"name":"camera","tags":"photo picture capture","f":["M3 7h4l2-3h6l2 3h4v13H3z"],"l":"M12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z","x":""},
-{"name":"image","tags":"photo picture gallery media","f":["M3 4h18v16H3z"],"l":"M3 16l5-5 4 4 3-3 6 6","x":""},
-{"name":"folder","tags":"directory files organize","f":["M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"],"l":"","x":""},
-{"name":"file","tags":"document page paper","f":["M6 3h8l5 5v13H6z"],"l":"M14 3v5h5","x":""},
-{"name":"trash","tags":"delete remove bin discard","f":["M6 7h12l-1 14H7z"],"l":"","x":"M4 7h16M9 7V4h6v3"},
-{"name":"pencil","tags":"edit write change draw","f":["M4 20l1-4L16 5l3 3L8 19z"],"l":"M14 7l3 3","x":""},
-{"name":"add","tags":"new create plus more","f":["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],"l":"M12 8v8M8 12h8","x":""},
-{"name":"done","tags":"success complete ok yes verified check","f":["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],"l":"M8 12l3 3 5-6","x":""},
-{"name":"warning","tags":"danger error caution problem","f":["M12 3l10 18H2z"],"l":"M12 10v4M12 17.5v.5","x":""},
-{"name":"info","tags":"help about details information","f":["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],"l":"M12 11v5M12 8v.5","x":""},
-{"name":"clock","tags":"time schedule history wait","f":["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],"l":"M12 7v5l3 2","x":""},
-{"name":"calendar","tags":"date schedule event day","f":["M3 5h18v16H3z"],"l":"M3 10h18","x":"M8 3v4M16 3v4"},
-{"name":"pin","tags":"location place map address","f":["M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"],"l":"M12 7.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z","x":""},
-{"name":"cart","tags":"shop buy store checkout purchase money","f":["M6 7h15l-2 8H8z"],"l":"","x":"M2 3h3l1 4M9 20h.01M17 20h.01"},
-{"name":"wallet","tags":"money cash payment finance","f":["M3 7h16a2 2 0 0 1 2 2v10H5a2 2 0 0 1-2-2z"],"l":"M16 13h3","x":"M3 7l13-3v3"},
-{"name":"card","tags":"payment credit bank money billing","f":["M2 5h20v14H2z"],"l":"M2 10h20M6 15h4","x":""},
-{"name":"chart","tags":"analytics stats data graph report","f":["M8 11h3v9H8z","M14 6h3v14h-3z"],"l":"","x":"M4 20V4M4 20h16"},
-{"name":"code","tags":"developer programming brackets","f":[],"l":"","x":"M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"},
-{"name":"terminal","tags":"console command cli shell","f":["M3 4h18v16H3z"],"l":"M7 9l3 3-3 3M12 16h5","x":""},
-{"name":"globe","tags":"world internet web language international","f":["M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"],"l":"M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18","x":""},
-{"name":"wifi","tags":"network internet connection wireless","f":[],"l":"","x":"M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M12 20h.01"},
-{"name":"battery","tags":"power charge energy","f":["M2 7h17v10H2z"],"l":"M5 10v4","x":"M22 11v2"},
-{"name":"bolt","tags":"fast power energy lightning quick","f":["M13 2L4 14h7l-1 8 9-12h-7z"],"l":"","x":""},
-{"name":"bookmark","tags":"save read later","f":["M6 3h12v18l-6-4-6 4z"],"l":"","x":""},
-{"name":"flag","tags":"report mark milestone","f":["M5 4h13l-2 4 2 4H5z"],"l":"","x":"M5 4v17"},
-{"name":"link","tags":"url chain connect attach","f":[],"l":"","x":"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"},
-{"name":"message","tags":"chat comment talk bubble","f":["M3 4h18v13H8l-5 4z"],"l":"","x":""},
-{"name":"phone","tags":"mobile device smartphone","f":["M6 3h12v18H6z"],"l":"M11 18h2","x":""},
-{"name":"laptop","tags":"computer device work","f":["M5 5h14v10H5z"],"l":"","x":"M2 19h20"},
-{"name":"music","tags":"audio song sound note","f":["M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6z","M17 13a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"],"l":"","x":"M9 18V5l11-2v13"},
-{"name":"play","tags":"video start media run","f":["M7 4l13 8-13 8z"],"l":"","x":""},
-{"name":"download","tags":"save get export device arrow down","f":[],"l":"","x":"M12 3v12M7 10l5 5 5-5M4 20h16"},
-{"name":"upload","tags":"send publish import arrow up","f":[],"l":"","x":"M12 15V3M7 8l5-5 5 5M4 20h16"},
-{"name":"eye","tags":"view visible show preview","f":["M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"],"l":"M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z","x":""},
-{"name":"tag","tags":"label price category","f":["M3 3h8l10 10-8 8L3 11z"],"l":"M7.5 7.5h.01","x":""},
-{"name":"gift","tags":"present reward surprise","f":["M4 9h16v12H4z"],"l":"","x":"M3 9h18M12 9v12M12 9C9 9 7 7.5 8 6s4 .5 4 3c0-2.5 3-4.5 4-3s-1 3-4 3"}
-];
-const WORKER_URL = ""; // preview: set in site/config.js on the real site
+<script type="module">
+import { cleanIcon } from "./lib/icon.js";
+import { WORKER_URL } from "./config.js";
 
 const KEY = "ikonia:generated";
 const $ = (id) => document.getElementById(id);
@@ -220,13 +149,13 @@ function render() {
   }
   $("grid").innerHTML = list.length
     ? list.map((i) => `<button class="ic" type="button" data-n="${i.name}" aria-label="Copy ${i.name} icon">${svg(i)}<span>${i.name}</span></button>`).join("")
-    : `<div class="empty">No icons match “${q.replace(/[<>&"]/g, "")}”. Generate one below or try a broader word such as “money” or “time”.</div>`;
+    : `<div class="empty">No icons match “${q.replace(/[<>&"]/g, "")}”. ${WORKER_URL ? "Generate one below or try" : "Try"} a broader word such as “money” or “time”.</div>`;
   $("count").textContent = t.length ? `${list.length} of ${I.length} icons` : `${I.length} icons`;
   updateGen();
 }
 function updateGen() {
   const has = q.trim().length > 1;
-  $("gen").hidden = !has;
+  $("gen").hidden = !(has && WORKER_URL);
   if (!busy) $("genBtn").textContent = `Generate an icon for “${q.trim()}” with AI`;
 }
 function toast(m) {
@@ -244,7 +173,7 @@ function copy(txt, msg) {
 function saved() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
 
 async function load() {
-  try { I = PRELOADED.map(cleanIcon); }
+  try { I = (await (await fetch("icons.json")).json()).map(cleanIcon); }
   catch { toast("Could not load icons.json"); }
   for (const s of saved()) {
     try { const c = cleanIcon(s); if (!I.some((i) => i.name === c.name)) I.push(c); } catch {}
