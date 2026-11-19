@@ -1,0 +1,28 @@
+{
+  "name": "ikonia-mcp",
+  "version": "0.1.0",
+  "description": "MCP server: search Ikonia icons by meaning, get them as SVG or React, and generate new ones with Claude.",
+  "type": "module",
+  "bin": {
+    "ikonia-mcp": "server.js"
+  },
+  "main": "server.js",
+  "files": [
+    "server.js",
+    "lib",
+    "icons.json"
+  ],
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "prepack": "node scripts/sync.mjs",
+    "test": "node test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  }
+}
