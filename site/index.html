@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ikonia · icon library with an MCP server</title>
+<meta name="description" content="Outline and solid icons you can search by meaning, plus an MCP server your coding agent can query. Free, MIT licence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f6;--card:#ffffff;--ink:#0e1424;--mute:#5b6479;--line:#d8deea;--accent:#2f5bff;--onaccent:#fff;--code:#0e1424;--codeink:#e6eaf6;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;--code:#141416;--codeink:#e6eaf6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0a0b;--card:#141416;--ink:#ececf0;--mute:#9a9fb0;--line:#26272c;--accent:#86a0ff;--onaccent:#0a0a0b;--code:#141416;--codeink:#e6eaf6;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0}
+.brand{font:800 22px "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;display:flex;gap:10px;align-items:center;color:var(--ink);text-decoration:none}
+.brand i{width:26px;height:26px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--onaccent)}
+nav a{color:var(--mute);text-decoration:none;margin-left:20px;font-weight:500}
+nav a:hover{color:var(--ink)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+h1{font:800 clamp(40px,8vw,84px)/.95 "Bricolage Grotesque",sans-serif;letter-spacing:-.035em;margin:44px 0 18px;max-width:11em}
+.lead{color:var(--mute);font-size:19px;max-width:34em;margin:0 0 30px}
+.search{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 18px;max-width:640px}
+.search:focus-within{border-color:var(--accent)}
+.search svg{flex:none;color:var(--mute)}
+.search input{flex:1;border:0;background:none;font:500 20px "Instrument Sans",sans-serif;color:var(--ink);padding:14px 0;min-width:0}
+.search input:focus-visible{outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;align-items:center;color:var(--mute);font-size:14px}
+.chips button{border:1px solid var(--line);background:none;color:var(--ink);border-radius:99px;padding:5px 13px;font:500 14px "Instrument Sans",sans-serif;cursor:pointer}
+.chips button:hover{border-color:var(--accent);color:var(--accent)}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:48px 0 14px;gap:12px;flex-wrap:wrap}
+.count{color:var(--mute);font-size:15px}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{border:0;background:none;color:var(--mute);font:600 14px "Instrument Sans",sans-serif;padding:7px 16px;border-radius:9px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--onaccent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.ic{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:12px;cursor:pointer;color:var(--ink);font:500 13px "Instrument Sans",sans-serif;transition:border-color .15s,transform .15s}
+.ic svg{width:32px;height:32px}
+.ic:hover{border-color:var(--accent)}
+.ic:active{transform:scale(.96)}
+.ic span{color:var(--mute);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.empty{grid-column:1/-1;padding:40px 0;color:var(--mute)}
+section.agents{margin:96px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+h2{font:800 clamp(28px,4vw,40px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em;margin:0 0 14px}
+.agents p{color:var(--mute);margin:0 0 14px;max-width:30em}
+.code{background:var(--code);color:var(--codeink);border-radius:16px;padding:20px;position:relative;border:1px solid var(--line)}
+.code pre{margin:0;overflow-x:auto;font:400 14px/1.7 "JetBrains Mono",monospace}
+.code .cp{position:absolute;top:12px;right:12px;border:1px solid #3a3d48;background:none;color:var(--codeink);border-radius:8px;padding:4px 10px;font:500 12px "Instrument Sans",sans-serif;cursor:pointer}
+.code .cp:hover{border-color:var(--accent)}
+.ask{margin-top:14px;font:400 14px/1.6 "JetBrains Mono",monospace;color:var(--mute);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.ask b{color:var(--ink);font-weight:500}
+footer{margin:96px 0 0;padding:28px 0 36px;border-top:1px solid var(--line);color:var(--mute);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--mute)}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.2s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:760px){section.agents{grid-template-columns:1fr}nav a:first-child{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.gen{margin-top:14px}.gen[hidden]{display:none}.gen button{border:2px dashed var(--accent);background:none;color:var(--accent);border-radius:12px;padding:9px 16px;font:600 15px "Instrument Sans",sans-serif;cursor:pointer}.gen button:hover:not(:disabled){background:var(--accent);color:var(--onaccent)}.gen button:disabled{opacity:.6;cursor:wait}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="brand" href="#"><i><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.2 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg></i>Ikonia</a>
+  <nav><a href="#library">Library</a><a href="#agents">Use it in your agent</a><a href="#licence">Licence</a></nav>
+</header>
+
+<main>
+<h1>Find the icon by what it means.</h1>
+<p class="lead">Outline and solid icons, searchable by meaning. Type “money” and get wallets and cards, not just a file called money.svg. Free for anything.</p>
+
+<label class="search" for="q">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="7.5"/><path d="M16 16l5 5"/></svg>
+  <input id="q" type="search" placeholder="Search by meaning: save, security, time…" autocomplete="off" spellcheck="false">
+</label>
+<div class="chips" id="chips">Try:</div>
+<div class="gen" id="gen" hidden><button type="button" id="genBtn"></button></div>
+
+<div class="bar" id="library">
+  <div class="count" id="count" aria-live="polite"></div>
+  <div class="seg" role="group" aria-label="Icon style">
+    <button type="button" data-m="outline" aria-pressed="true">Outline</button>
+    <button type="button" data-m="solid" aria-pressed="false">Solid</button>
+  </div>
+</div>
+<div class="grid" id="grid"></div>
+
+<section class="agents" id="agents">
+  <div>
+    <h2>Let your coding agent pick the icon.</h2>
+    <p>Add the MCP server once. Your agent can search by meaning, then paste the SVG straight into your code. No guessing file names.</p>
+    <div class="ask"><b>You:</b> add a button that saves the report to the device.<br><b>Agent:</b> search_icons("save to device") → download, bookmark</div>
+  </div>
+  <div class="code">
+    <button class="cp" type="button" id="cp">Copy</button>
+<pre id="cfg">{
+  "mcpServers": {
+    "ikonia": {
+      "command": "npx",
+      "args": ["-y", "ikonia-mcp"]
+    }
+  }
+}</pre>
+  </div>
+</section>
+</main>
+
+<footer id="licence">
+  <span>Ikonia icons are MIT licensed. Use them in personal and commercial work, no credit needed.</span>
+  <span>Click any icon to copy its SVG.</span>
+</footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+import { cleanIcon } from "./lib/icon.js";
+import { WORKER_URL } from "./config.js";
+
+const KEY = "ikonia:generated";
+const $ = (id) => document.getElementById(id);
+let I = [], mode = "outline", q = "", busy = false, tt;
+
+function svg(i, exp) {
+  const s = mode === "solid", cut = exp ? "#fff" : "var(--card)";
+  const f = i.f.map((d) => `<path d="${d}"${s ? ' fill="currentColor"' : ""}/>`).join("");
+  const l = i.l ? `<path d="${i.l}"${s ? ` stroke="${cut}"` : ""}/>` : "";
+  const x = i.x ? `<path d="${i.x}"/>` : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${f}${l}${x}</svg>`;
+}
+function score(i, t) {
+  const w = i.tags.split(" ");
+  if (i.name === t) return 4;
+  if (i.name.startsWith(t)) return 3;
+  if (w.includes(t)) return 2.5;
+  if (w.some((k) => k.startsWith(t))) return 1.5;
+  return (i.name + " " + i.tags).includes(t) ? 0.5 : 0;
+}
+function render() {
+  const t = q.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  let list = I;
+  if (t.length) {
+    list = I.map((i) => [i, t.reduce((a, w) => a + score(i, w), 0)])
+      .filter((p) => p[1] > 0).sort((a, b) => b[1] - a[1]).map((p) => p[0]);
+  }
+  $("grid").innerHTML = list.length
+    ? list.map((i) => `<button class="ic" type="button" data-n="${i.name}" aria-label="Copy ${i.name} icon">${svg(i)}<span>${i.name}</span></button>`).join("")
+    : `<div class="empty">No icons match “${q.replace(/[<>&"]/g, "")}”. Generate one below or try a broader word such as “money” or “time”.</div>`;
+  $("count").textContent = t.length ? `${list.length} of ${I.length} icons` : `${I.length} icons`;
+  updateGen();
+}
+function updateGen() {
+  const has = q.trim().length > 1;
+  $("gen").hidden = !has;
+  if (!busy) $("genBtn").textContent = `Generate an icon for “${q.trim()}” with AI`;
+}
+function toast(m) {
+  const e = $("toast"); e.textContent = m; e.classList.add("on");
+  clearTimeout(tt); tt = setTimeout(() => e.classList.remove("on"), 2200);
+}
+function copy(txt, msg) {
+  const fb = () => {
+    const a = document.createElement("textarea"); a.value = txt; document.body.appendChild(a); a.select();
+    try { document.execCommand("copy"); toast(msg); } catch { toast("Copy failed. Select the text manually."); }
+    a.remove();
+  };
+  try { navigator.clipboard.writeText(txt).then(() => toast(msg), fb); } catch { fb(); }
+}
+function saved() { try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
+
+async function load() {
+  try { I = (await (await fetch("icons.json")).json()).map(cleanIcon); }
+  catch { toast("Could not load icons.json"); }
+  for (const s of saved()) {
+    try { const c = cleanIcon(s); if (!I.some((i) => i.name === c.name)) I.push(c); } catch {}
+  }
+  render();
+}
+
+async function generate() {
+  if (busy) return;
+  if (!WORKER_URL) { toast("Set WORKER_URL in site/config.js first (see README)."); return; }
+  busy = true; $("genBtn").disabled = true; $("genBtn").textContent = "Generating…";
+  try {
+    const r = await fetch(WORKER_URL, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt: q.trim() }) });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || "Request failed");
+    const icon = cleanIcon(data);
+    if (!I.some((i) => i.name === icon.name)) I.push(icon);
+    try { localStorage.setItem(KEY, JSON.stringify([...saved(), icon].slice(-100))); } catch {}
+    q = icon.name; $("q").value = q; render();
+    toast(`Generated “${icon.name}”. Saved in this browser.`);
+  } catch (e) { toast(e.message); }
+  finally { busy = false; $("genBtn").disabled = false; updateGen(); }
+}
+
+$("q").addEventListener("input", (e) => { q = e.target.value; render(); });
+$("genBtn").addEventListener("click", generate);
+$("grid").addEventListener("click", (e) => {
+  const b = e.target.closest(".ic"); if (!b) return;
+  const i = I.find((x) => x.name === b.dataset.n);
+  copy(svg(i, true), `Copied ${i.name} as SVG`);
+});
+document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => {
+  mode = b.dataset.m;
+  document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+["money", "security", "upload", "time", "message"].forEach((w) => {
+  const b = document.createElement("button"); b.type = "button"; b.textContent = w;
+  b.onclick = () => { $("q").value = w; q = w; render(); };
+  $("chips").appendChild(b);
+});
+$("cp").onclick = () => copy($("cfg").textContent, "Config copied");
+load();
+</script>
+</body>
+</html>
