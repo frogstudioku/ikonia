@@ -38,7 +38,8 @@ export function cleanIcon(raw) {
   const l = path(raw.l, 900);
   const x = path(raw.x, 900);
   if (!f.length && !l && !x) throw new Error("Icon has no shapes");
-  return { name, tags, f, l, x };
+  const c = /^[a-z0-9-]{2,40}$/.test(String(raw.c || "")) ? String(raw.c) : "";
+  return { name, tags, f, l, x, c };
 }
 
 export function parseModelJson(text) {
