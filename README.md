@@ -9,7 +9,7 @@ site/            website statis (GitHub Pages)
   config.js      isi WORKER_URL di sini
   lib/icon.js    validasi + pemanggil Claude (dipakai browser, Worker, dan skrip)
 worker/index.js  proxy kecil (Cloudflare Worker) yang menyimpan API key
-scripts/         generate ikon massal dari terminal
+scripts/         generate-icons.mjs (pakai API) dan add-icons.mjs (dari chat)
 mcp/             server MCP (search_icons, get_icon, generate_icon)
 .github/workflows/
   pages.yml           deploy otomatis ke GitHub Pages
@@ -26,7 +26,7 @@ Kunci API tidak boleh ada di kode website, karena GitHub Pages bersifat publik. 
 
 Pencarian dan galeri ikon sudah jalan di tahap ini. Tombol generate butuh langkah 2.
 
-## 2. Aktifkan generate AI di website (Cloudflare Worker)
+## 2. Aktifkan generate AI di website (opsional, butuh saldo API)
 
 1. Buat akun gratis di Cloudflare, lalu buat API key di console.anthropic.com.
 2. Edit `wrangler.toml`, ganti `ALLOWED_ORIGIN` dengan alamat situsmu, tanpa path dan tanpa garis miring di akhir. Contoh: `https://username.github.io`. Kalau pakai domain sendiri, isi keduanya dipisah koma.
@@ -60,6 +60,24 @@ Ikon yang dibuat lewat tombol tersimpan **di browser pengunjung itu saja**. Untu
 ANTHROPIC_API_KEY=sk-ant-... node scripts/generate-icons.mjs "rocket, coffee, shield"
 ```
 Perlu Node 18 atau lebih baru.
+
+## 3b. Tanpa saldo API: buat ikon lewat chat
+
+Kalau tidak mau memakai API berbayar, minta Claude membuat ikon langsung di chat (claude.ai, sesuai batas paket akunmu), lalu masukkan hasilnya ke repo. Tombol generate di website bersembunyi sendiri selama `WORKER_URL` kosong, jadi website tetap rapi tanpa Worker.
+
+1. Kirim prompt ini ke Claude (ganti daftar ikonnya):
+   ```
+   Buatkan ikon-ikon ini untuk pustaka ikon: pillow, bed, alarm, lamp.
+   Balas HANYA dengan JSON array. Setiap ikon berbentuk:
+   {"name":"kebab-case","tags":"6-12 sinonim huruf kecil dipisah spasi","f":["path bentuk tertutup"],"l":"path detail dalam atau kosong","x":"path garis terbuka atau kosong"}
+   Aturan: viewBox 24x24, koordinat 2 sampai 22, stroke 1.75 dengan ujung bulat. "f" = bentuk tertutup (dipenuhi warna di gaya solid, maks 4), "l" = detail di dalam bentuk, "x" = garis luar yang tidak pernah diisi. Hanya perintah path M L H V C S Q T A Z. Tanpa teks atau elemen SVG lain.
+   Contoh: {"name":"lock","tags":"security password private","f":["M5 11h14v10H5z"],"l":"M12 15v2","x":"M8 11V8a4 4 0 0 1 8 0v3"}
+   ```
+2. Simpan balasannya ke file `new-icons.json` di folder repo.
+3. Jalankan `node scripts/add-icons.mjs new-icons.json`. Skrip memvalidasi setiap ikon, menolak yang tidak valid, dan menambahkan sisanya ke `site/icons.json`.
+4. Commit dan push `site/icons.json`. Situs ter-deploy ulang otomatis.
+
+Alternatif lain tanpa saldo API: pakai Claude Code dengan langganan Claude, lalu minta langsung "tambahkan ikon X ke site/icons.json sesuai format yang ada".
 
 ## Keamanan dan kualitas
 
