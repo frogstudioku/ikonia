@@ -5,6 +5,10 @@ on:
       words:
         description: "Icon ideas, comma separated (max 30), e.g. rocket, coffee, shield"
         required: true
+      category:
+        description: "Category slug from site/categories.json (optional), e.g. finance-banking"
+        required: false
+        default: ""
 permissions:
   contents: write
   actions: write
@@ -19,8 +23,9 @@ jobs:
       - name: Generate
         env:
           WORDS: ${{ inputs.words }}
+          CATEGORY: ${{ inputs.category }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/generate-icons.mjs "$WORDS"
+        run: node scripts/generate-icons.mjs "$WORDS" "$CATEGORY"
       - name: Commit and redeploy
         env:
           GH_TOKEN: ${{ github.token }}
