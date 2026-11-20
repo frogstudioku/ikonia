@@ -5,11 +5,12 @@ Pustaka ikon (outline dan solid) yang bisa dicari berdasarkan makna, dengan tomb
 ```
 site/            website statis (GitHub Pages)
   index.html     halaman utama
-  icons.json     data ikon
+  icons.json     data ikon (field c = kategori)
+  categories.json 100 kategori dalam 10 grup
   config.js      isi WORKER_URL di sini
   lib/icon.js    validasi + pemanggil Claude (dipakai browser, Worker, dan skrip)
 worker/index.js  proxy kecil (Cloudflare Worker) yang menyimpan API key
-scripts/         generate-icons.mjs (pakai API) dan add-icons.mjs (dari chat)
+scripts/         generate-icons.mjs (API), add-icons.mjs (dari chat), status.mjs (progres kategori)
 mcp/             server MCP (search_icons, get_icon, generate_icon)
 .github/workflows/
   pages.yml           deploy otomatis ke GitHub Pages
@@ -78,6 +79,23 @@ Kalau tidak mau memakai API berbayar, minta Claude membuat ikon langsung di chat
 4. Commit dan push `site/icons.json`. Situs ter-deploy ulang otomatis.
 
 Alternatif lain tanpa saldo API: pakai Claude Code dengan langganan Claude, lalu minta langsung "tambahkan ikon X ke site/icons.json sesuai format yang ada".
+
+## 3c. Kategori dan target 50 ikon
+
+Ikon dikelompokkan dalam 100 kategori (10 grup) yang daftarnya ada di `site/categories.json`. Setiap ikon di `site/icons.json` punya field `"c"` berisi slug kategorinya, misalnya `"c":"finance-banking"`. Ikon tanpa kategori muncul di *Miscellaneous Objects*. Target tiap kategori adalah 50 ikon.
+
+Cek progres:
+```bash
+node scripts/status.mjs            # jumlah ikon per kategori, target 50
+node scripts/status.mjs --names    # semua nama ikon (supaya tidak dibuat dobel)
+```
+
+Tambah ikon untuk satu kategori lewat chat:
+1. Kirim ke Claude: `Buatkan 50 ikon untuk kategori "Finance & Banking". Jangan pakai nama ini: <hasil status.mjs --names>.` lalu tempel aturan format dari bagian 3b.
+2. Simpan balasan JSON ke `new-icons.json`.
+3. Jalankan `node scripts/add-icons.mjs new-icons.json --category=finance-banking`, lalu commit `site/icons.json`.
+
+Kalau memakai Claude Code (langganan), cukup minta: "Jalankan `node scripts/status.mjs`. Untuk setiap kategori yang di bawah 50, tulis ikon sampai 50 dengan format di `site/lib/icon.js`, simpan ke file sementara, jalankan `scripts/add-icons.mjs --category=...`, lalu lanjut ke kategori berikutnya." Periksa hasilnya di galeri, karena ikon buatan AI tidak selalu rapi.
 
 ## Keamanan dan kualitas
 
